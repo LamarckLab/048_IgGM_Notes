@@ -37,7 +37,15 @@ python -c "import torch; print(torch.__version__, torch.version.cuda, torch.cuda
 python design.py --help
 ```
 
-## 06  IgGM 权重与输入输出目录
+## 06  （可选）安装 PyRosetta —— 供 `--relax` 补侧链
+> 要用 `--relax`（补全侧链 + 能量最小化）的话，需要安装PyRosetta
+```bash
+python -m pip install https://west.rosettacommons.org/pyrosetta/release/release/PyRosetta4.Release.python310.ubuntu.wheel/pyrosetta-2026.26+release.f8a8eab434-cp310-cp310-linux_x86_64.whl
+python -c "import pyrosetta; print(pyrosetta.__version__)"   # 验证装进了 env
+```
+> wheel 目录（版本会更新，按需替换文件名）：https://west.rosettacommons.org/pyrosetta/release/release/PyRosetta4.Release.python310.ubuntu.wheel/
+
+## 07  IgGM 权重与输入输出目录
 **236 机子路径**
 > 权重缓存：/data/lmk/IgGM/checkpoints  &nbsp;（首次运行自动从 Zenodo 下载）
 > 输入目录：/data/lmk/IgGM_inputs  &nbsp;（设计用 fasta + 抗原 pdb）
