@@ -21,7 +21,7 @@ CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=2
 
 ---
 
-> **00 补侧链(通用 flag)-- |全原子输出|--relax|需 PyRosetta|**
+> **00 补侧链 (通用 flag) -- |全原子输出|--relax|**
 
 任意设计命令末尾加 `--relax`即可补全侧链 + 能量最小化,输出全原子结构;可叠加到下面 01/02/03 任意功能，纯 CPU、明显更慢
 ```bash
@@ -35,7 +35,7 @@ python design.py \
   --relax # 加这一行
 ```
 
-> **01 部分 CDR 设计 -- |CDR-H3|完整复合物→自动表位|默认参数|**
+> **01 部分 CDR 设计 -- |CDR-H3|完整复合物→自动表位|**
 
 fasta 文件中 CDR-H3 用 `X` 挖空，搭配完整复合物 pdb，设计 CDR-H3 序列并预测复合物结构
 > 完整复合物模式下，IgGM 只从 pdb 取 **抗原结构** + **表位**（抗原侧接触残基）；不取抗体结构，也不看 CDR-H3 真实序列
@@ -48,7 +48,7 @@ python design.py \
   --output /data/lmk/IgGM_outputs
 ```
 
-> **02 全 CDR 设计 -- |全 6 个 CDR|完整复合物→自动表位|默认参数|**
+> **02 全 CDR 设计 -- |全 CDR|完整复合物→自动表位|**
 
 fasta 中 6 个 CDR 全部挖成 `X`,一次设计全部 CDR 并预测结构，命令同上
 ```bash
@@ -60,7 +60,7 @@ python design.py \
   --output /data/lmk/IgGM_outputs
 ```
 
-> **03 从头设计 -- |全 CDR|仅抗原 + 手动表位|--epitope|**
+> **03 从头设计 -- |全 CDR|仅抗原 + 手动表位|**
 
 无复合物,只给抗原-only pdb + `--epitope` 手动指定表位来设计 CDR
 ```bash
@@ -73,7 +73,7 @@ python design.py \
   --output /data/lmk/IgGM_outputs
 ```
 
-> **04 逆向设计 -- |结构→序列|inverse_design 模型|只出 fasta|**
+> **04 逆向设计 -- |结构→序列|**
 
 `--run_task inverse_design` 换用另一套权重 `antibody_inverse_design_trunk`，只设计序列、不预测结构，输出**只有 fasta、没有 pdb**（首次运行会自动下载该权重）
 ```bash
@@ -86,9 +86,9 @@ python design.py \
   --run_task inverse_design
 ```
 
-> **05 亲和力成熟 -- |优化已有抗体|单点扫描|--fasta_origin / --num_samples|**
+> **05 亲和力成熟 -- |单点扫描|**
 
-在已有抗体上做逐点突变扫描：`--fasta_origin` 给原始序列作起点，`--fasta` 的 `X` 标出待突变位点；每次只挖一个位点、其余保持原始并重设计，重复 `--num_samples` 次。**只出 fasta**（ `num_samples × 位点数` 个单点变体，无 pdb）；后续用官方 `scripts/Merge_output.ipynb` 汇总成频率 / logo
+在已有抗体上做逐点突变扫描：`--fasta_origin` 给原始序列作起点，`--fasta` 的 `X` 标出待突变位点；每次只挖一个位点、其余保持原始并重设计，重复 `--num_samples` 次。**只出 fasta**（ `num_samples × 位点数` 个单点变体，无 pdb）
 ```bash
 cd /data/lmk/IgGM
 CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=2 \
@@ -100,5 +100,9 @@ python design.py \
   --num_samples 2 \
   --output /data/lmk/IgGM_outputs
 ```
+
+> **06 人源化 -- |fr_design 模型|**
+
+FR 区人源化精修：具体命令与结果待实际用到时再测试补充
 
 ##### [IgGM 官方仓库](https://github.com/TencentAI4S/IgGM)
