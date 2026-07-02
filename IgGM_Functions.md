@@ -73,4 +73,32 @@ python design.py \
   --output /data/lmk/IgGM_outputs
 ```
 
+> **04 逆向设计 -- |结构→序列|inverse_design 模型|只出 fasta|**
+
+`--run_task inverse_design` 换用另一套权重 `antibody_inverse_design_trunk`，只设计序列、不预测结构，输出**只有 fasta、没有 pdb**（首次运行会自动下载该权重）
+```bash
+cd /data/lmk/IgGM
+CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=2 \
+python design.py \
+  --fasta /data/lmk/IgGM_inputs/8hpu_M_N_A_CDR_H3.fasta \
+  --antigen /data/lmk/IgGM_inputs/8hpu_M_N_A.pdb \
+  --output /data/lmk/IgGM_outputs \
+  --run_task inverse_design
+```
+
+> **05 亲和力成熟 -- |优化已有抗体|单点扫描|--fasta_origin / --num_samples|**
+
+在已有抗体上做逐点突变扫描：`--fasta_origin` 给原始序列作起点，`--fasta` 的 `X` 标出待突变位点；每次只挖一个位点、其余保持原始并重设计，重复 `--num_samples` 次。**只出 fasta**（ `num_samples × 位点数` 个单点变体，无 pdb）；后续用官方 `scripts/Merge_output.ipynb` 汇总成频率 / logo
+```bash
+cd /data/lmk/IgGM
+CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=2 \
+python design.py \
+  --fasta /data/lmk/IgGM_inputs/8hpu_M_N_A_CDR_H3.fasta \
+  --antigen /data/lmk/IgGM_inputs/8hpu_M_N_A.pdb \
+  --fasta_origin /data/lmk/IgGM_inputs/8hpu_M_N_A.fasta \
+  --run_task affinity_maturation \
+  --num_samples 2 \
+  --output /data/lmk/IgGM_outputs
+```
+
 ##### [IgGM 官方仓库](https://github.com/TencentAI4S/IgGM)
