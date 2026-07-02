@@ -35,9 +35,10 @@ python design.py \
   --relax # 加这一行
 ```
 
-> **01 单 CDR 设计 -- |CDR-H3|完整复合物→自动表位|默认参数|**
+> **01 部分 CDR 设计 -- |CDR-H3|完整复合物→自动表位|默认参数|**
 
-抗体 fasta 中 CDR-H3 用 `X` 挖空,配完整复合物 pdb,设计 CDR-H3 序列并预测复合物结构
+fasta 文件中 CDR-H3 用 `X` 挖空，搭配完整复合物 pdb，设计 CDR-H3 序列并预测复合物结构
+> 完整复合物模式下，IgGM 只从 pdb 取 **抗原结构** + **表位**（抗原侧接触残基）；不取抗体结构，也不看 CDR-H3 真实序列
 ```bash
 cd /data/lmk/IgGM
 CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=2 \
@@ -49,7 +50,7 @@ python design.py \
 
 > **02 全 CDR 设计 -- |全 6 个 CDR|完整复合物→自动表位|默认参数|**
 
-fasta 中 6 个 CDR 全部挖成 `X`,一次设计全部 CDR 并预测结构;命令同 01
+fasta 中 6 个 CDR 全部挖成 `X`,一次设计全部 CDR 并预测结构，命令同上
 ```bash
 cd /data/lmk/IgGM
 CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=2 \
@@ -61,13 +62,9 @@ python design.py \
 
 > **03 从头设计 -- |全 CDR|仅抗原 + 手动表位|--epitope|**
 
-无复合物,只给抗原-only pdb + `--epitope` 手动指定表位来设计 CDR;抗原-only pdb 用你已有的即可(此处从复合物 awk 抽 A 链得到)
+无复合物,只给抗原-only pdb + `--epitope` 手动指定表位来设计 CDR
 ```bash
 cd /data/lmk/IgGM
-awk 'substr($0,1,4)=="ATOM" && substr($0,22,1)=="A"' \
-    /data/lmk/IgGM_inputs/8hpu_M_N_A.pdb > /data/lmk/IgGM_inputs/8hpu_A_antigen_only.pdb
-echo "END" >> /data/lmk/IgGM_inputs/8hpu_A_antigen_only.pdb
-
 CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=2 \
 python design.py \
   --fasta /data/lmk/IgGM_inputs/8hpu_M_N_A_CDR_All.fasta \
